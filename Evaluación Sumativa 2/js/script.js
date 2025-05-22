@@ -4,9 +4,34 @@ function validar()
     const retValidarContrasenha = validarContrasenha();
     const retValidarDireccion = validarDireccion();
     const retValidarTelefono = validarTelefono();
-    return retValidarNombre && retValidarContrasenha && retValidarDireccion && retValidarTelefono;
-}
+    const retValidarAficiones = validarAficiones();
 
+    const todoValido = retValidarNombre && retValidarContrasenha && retValidarDireccion && retValidarTelefono && retValidarAficiones;
+
+    if (todoValido)
+    {
+        const nombre = document.getElementById("nombre").value;
+        const contrasenha = document.getElementById("contrasenha").value;
+        const direccion = document.getElementById("direccion").value;
+        const telefono = document.getElementById("telefono").value;
+
+        const { comuna, url } = obtenerDatosExtra();
+
+        const mensaje = 
+            "Formulario válido. Datos ingresados:\n" +
+            "Nombre: " + nombre + "\n" +
+            "Contraseña: " + contrasenha + "\n" +
+            "Dirección: " + direccion + "\n" +
+            "Teléfono: " + telefono + "\n" +
+            "Comuna: " + comuna + "\n" +
+            "URL: " + url + "\n" +
+            "Aficiones: " + listaAficiones.join(", ");
+
+        alert(mensaje);
+    }
+
+    return todoValido;
+}
 
 function validarNombre()
 {
@@ -160,7 +185,63 @@ function validarTelefono()
     else
     {
         errorTelefono.innerText = "";
+        return true;
     }
+}
+
+let listaAficiones = [];
+document.getElementById("agregarAficion").addEventListener("click", function() {
+    agregarAficion();
+});
+
+function validarAficiones() 
+{
+    const errorAficion = document.getElementById("error-aficion");
+
+    if (listaAficiones.length < 2) {
+        errorAficion.innerText = "Se requieren al menos dos aficiones para enviar.";
+        errorAficion.className = "text-danger small";
+        return false;
+    } else
+    {
+    errorAficion.innerText = "";
+    errorAficion.className = "";
+    return true;
+    }
+}
+
+function agregarAficion() {
+    const inputAficion = document.getElementById("aficion");
+    const errorAficion = document.getElementById("error-aficion");
+    const lista = document.getElementById("listaAficiones");
+
+    let aficion = inputAficion.value.trim();
+
+    if (aficion === "") {
+        errorAficion.innerText = "La afición no puede estar vacía";
+        errorAficion.className = "text-danger small";
+        return;
+    } else {
+        errorAficion.innerText = "";
+        errorAficion.className = "";
+    }
+
+    listaAficiones.push(aficion);
+
+    inputAficion.value = "";
+
+    const li = document.createElement("li");
+    li.textContent = aficion;
+    li.className = "list-group-item";
+    lista.appendChild(li);
+}
+
+function obtenerDatosExtra()
+{
+    const comuna = document.getElementById("comuna").value.trim();
+    const url = document.getElementById("url").value.trim();
+
+    return { comuna, url };
 }
 
 function contieneLetraYDigito(str)
